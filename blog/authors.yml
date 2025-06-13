@@ -1,0 +1,11 @@
+emilychen:
+  name: Emily Chen
+  title: Doc maintainer
+  url: https://www.linkedin.com/in/emilychen80108/
+  image_url: https://avatars.githubusercontent.com/u/59937114?v=4&size=64
+  page:
+    # customize the url of the author page at /blog/authors/<permalink>
+    permalink: "/"
+  socials:
+    linkedin: emilychen80108
+    github: https://github.com/yenjungchen80108
