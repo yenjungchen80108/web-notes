@@ -33,4 +33,4 @@ export default $config({
 });
 ```
 
-A new page is now available at [sst-next-v2.vercel.app](sst-next-v2.vercel.app).
+A new page is now available at [sst-next-v2.vercel.app](https://sst-next-v2.vercel.app/).
