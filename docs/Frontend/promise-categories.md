@@ -4,52 +4,88 @@ sidebar_position: 1
 
 # Promise Categories
 
-Docusaurus can manage multiple versions of your docs.
+## promise.all
 
-## Create a docs version
+> 等待所有 Promise 都完成
 
-Release a version 1.0 of your project:
+```javascript
+const promiseAll = (promises) => {
+  return new Promise((resolve, reject) => {
+    if (!Array.array(promises)) {
+      return reject(new TypeError("argument must be an array"));
+    }
 
-```bash
-npm run docusaurus docs:version 1.0
-```
+    let res = [];
+    let completed = 0;
 
-The `docs` folder is copied into `versioned_docs/version-1.0` and `versions.json` is created.
+    promises.forEach((promise, index) => {
+      Promise.resolve(promise)
+        .then((value) => {
+          // 將結果存入 res 陣列
+          res[index] = value;
+          completed++;
 
-Your docs now have 2 versions:
-
-- `1.0` at `http://localhost:3000/docs/` for the version 1.0 docs
-- `current` at `http://localhost:3000/docs/next/` for the **upcoming, unreleased docs**
-
-## Add a Version Dropdown
-
-To navigate seamlessly across versions, add a version dropdown.
-
-Modify the `docusaurus.config.js` file:
-
-```js title="docusaurus.config.js"
-export default {
-  themeConfig: {
-    navbar: {
-      items: [
-        // highlight-start
-        {
-          type: "docsVersionDropdown",
-        },
-        // highlight-end
-      ],
-    },
-  },
+          // 如果所有 Promise 都已完成，則返回結果
+          if (completed === promises.length) {
+            resolve(res);
+          }
+        })
+        .catch(reject); // 如果其中一個 Promise 失敗，則返回失敗的結果
+    });
+  });
 };
 ```
 
-The docs version dropdown appears in your navbar:
+## promise.allSettled
 
-![Docs Version Dropdown](./img/docsVersionDropdown.png)
+> 等待所有 Promise 都完成，不論成功或失敗
+> 與 promise.all 不同，promise.allSettled 不會因為其中一個 Promise 失敗而 reject
 
-## Update an existing version
+```javascript
+const promiseAllSettled = (promises) => {
+  return new Promise((resolve) => {
+    const res = [];
+    let completed = 0;
 
-It is possible to edit versioned docs in their respective folder:
+    promises.forEach((promise, index) => {
+      Promise.resolve(promise)
+        .then((val) => {
+          res[index] = { status: "fulfilled", val };
+        })
+        .catch((reason) => {
+          res[index] = { status: "rejected", reason };
+        })
+        .finally(() => {
+          completed++;
+          if (completed === promises.length) {
+            resolve(res);
+          }
+        });
+    });
+  });
+};
+```
 
-- `versioned_docs/version-1.0/hello.md` updates `http://localhost:3000/docs/hello`
-- `docs/hello.md` updates `http://localhost:3000/docs/next/hello`
+# promise.race
+
+> 等待第一個 Promise 完成
+
+```javascript
+const promiseRace = (promises) => {};
+```
+
+# promise.any
+
+> 等待第一個 Promise 完成，不論成功或失敗
+
+```javascript
+const promiseAny = (promises) => {};
+```
+
+# promise.resolve
+
+> 返回一個已經完成的 Promise
+
+```javascript
+const promiseResolve = (value) => {};
+```

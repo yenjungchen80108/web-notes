@@ -4,6 +4,8 @@ sidebar_position: 1
 
 # What is Serverless?
 
+Serverless is a cloud computing model that allows developers to build and run applications without worrying about the underlying infrastructure.
+
 <figure>
   <img src="/img/serverless/cold_start.png" alt="Serverless" width="700" height="auto" />
   <figcaption style={{ textAlign: "center" }}>Cold Start</figcaption>
