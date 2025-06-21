@@ -10,7 +10,7 @@ debounce and throttle are used to limit the rate at which a function can fire.
 
 Debounce is used to limit the rate at which a function can fire. It will wait for a certain amount of time to pass before calling the function again.
 
-限制函數執行頻率，在一段時間內只執行一次。
+等最後一次操作結束後 n 毫秒才觸發。期間內再觸發會重置計時器。
 
 ```javascript
 let counter = 0;
@@ -47,7 +47,7 @@ debouncedFetchData();
 
 Throttle is used to limit the rate at which a function can fire. It will call the function immediately and then wait for a certain amount of time to pass before calling the function again.
 
-只會在設定的時間間隔內執行一次。
+每隔 n 毫秒最多執行一次，即使事件連續觸發也會被限制頻率。
 
 ```javascript
 const fetchData = () => {
@@ -83,3 +83,11 @@ throttledFetchData();
 throttledFetchData();
 throttledFetchData();
 ```
+
+## 簡表對比
+
+| 特性         | Debounce                      | Throttle               |
+| ------------ | ----------------------------- | ---------------------- |
+| 執行時機     | 最後一次操作結束 N 毫秒後觸發 | 每隔 N 毫秒觸發一次    |
+| 常見用途     | 搜尋建議、自動儲存            | 滾動加載、拖拉、resize |
+| 是否跳過事件 | 可能（只執行最後一次）        | 是（中間事件不處理）   |
