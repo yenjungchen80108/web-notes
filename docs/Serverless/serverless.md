@@ -57,7 +57,7 @@ Lambda can be separated into init phase and invoke phase, as the init phase, lik
 Understanding the Execution Flow: Cold Start vs. Warm Start
 
 <figure>
-    <img src="/img/serverless/cold_start.png" alt="Serverless process diagram" width="500" />
+    <img src="/img/serverless/cold_warm_start_full.png" alt="Serverless process diagram" width="500" />
 </figure>
 
 fig2. Serverless process diagram — cold and warm start (handcrafted detailed version)
