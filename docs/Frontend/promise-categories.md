@@ -71,15 +71,49 @@ const promiseAllSettled = (promises) => {
 > 等待第一個 Promise 完成
 
 ```javascript
-const promiseRace = (promises) => {};
+const promiseRace = (promises) => {
+  return new Promise((resolve, reject) => {
+    for (let p of promises) {
+      Promise.resolve(p).then(resolve, reject);
+    }
+  });
+};
 ```
+
+重點
+
+- `Promise.resolve(p)` 確保即便傳入的是值，也轉成 Promise。
+- 第一個成功就 resolve，第一個失敗就 reject，後面結果會被忽略。
 
 # promise.any
 
 > 等待第一個 Promise 完成，不論成功或失敗
 
 ```javascript
-const promiseAny = (promises) => {};
+const promiseAny = (promises) => {
+  return new Promise((resolve, reject) => {
+    let errors = [];
+    let pending = promises.length;
+
+    if (pending === 0) {
+      reject(new AggregateError([], "All promises were rejected"));
+      return;
+    }
+
+    promises.forEach((p, i) => {
+      Promise.resolve(p).then(
+        (value) => resolve(value),
+        (err) => {
+          errors[i] = err;
+          pending -= 1;
+          if (pending === 0) {
+            reject(new AggregateError(errors, "All promises were rejected"));
+          }
+        }
+      );
+    });
+  });
+};
 ```
 
 # promise.resolve
@@ -87,5 +121,7 @@ const promiseAny = (promises) => {};
 > 返回一個已經完成的 Promise
 
 ```javascript
-const promiseResolve = (value) => {};
+const promiseResolve = (value) => {
+  return new Promise((resolve) => resolve(value));
+};
 ```

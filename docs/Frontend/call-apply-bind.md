@@ -173,11 +173,12 @@ ES6+ 開始的趨勢就是：能不用 this 就不用 this。
 
 這些用途仍然會用得到：
 
-場景 為什麼還會用到
-低階函式庫 像 lodash 的 throttle、debounce 內部常綁 this
-class-based OO code 比如自訂 event handler 類別時
-需要動態切換 context 的場景 如使用 Function.prototype.call 來借用其他物件的方法
-手動觸發函式並帶參數與 this 類似 fn.call(this, a, b) 或 fn.apply(this, [a, b])
+| 場景                             | 為什麼還會用到                                      |
+| -------------------------------- | --------------------------------------------------- |
+| 低階函式庫                       | 像 lodash 的 throttle、debounce 內部常綁 this       |
+| class-based OO code              | 比如自訂 event handler 類別時                       |
+| 需要動態切換 context 的場景      | 如使用 Function.prototype.call 來借用其他物件的方法 |
+| 手動觸發函式並帶參數與 this 類似 | fn.call(this, a, b) 或 fn.apply(this, [a, b])       |
 
 ⸻
 
@@ -202,6 +203,68 @@ function createCounter() {
 在 React Function Component 為主的現代寫法中，call / apply / bind 幾乎不再必要，因為根本沒在用 this。
 
 這三個方法仍然是 JavaScript 的底層機制，學起來有價值，但你不會天天用它，除非你在寫：
-• 老的 class-based 架構
-• 原生 DOM 綁定處理器
-• 某些 advanced library 開發
+
+- 老的 class-based 架構
+- 原生 DOM 綁定處理器
+- 某些 advanced library 開發
+
+## 手寫 call, apply, bind
+
+```js
+// 手寫 call
+Function.prototype.myCall = function (context) {
+  if (typeof this !== "function") {
+    throw new TypeError("myCall must be called on a function");
+  }
+  context = context || globalThis; // 預設 global
+  const fnSymbol = Symbol(); // 避免屬性衝突
+  context[fnSymbol] = this;
+
+  const args = Array.prototype.slice.call(arguments, 1);
+  const result = context[fnSymbol](...args);
+
+  delete context[fnSymbol];
+  return result;
+};
+
+// 手寫 apply
+Function.prototype.myApply = function (context, args) {
+  if (typeof this !== "function") {
+    throw new TypeError("myApply must be called on a function");
+  }
+  context = context || globalThis;
+  const fnSymbol = Symbol();
+  context[fnSymbol] = this;
+
+  let result;
+  if (args) {
+    if (!Array.isArray(args)) {
+      throw new TypeError("Second argument must be an array");
+    }
+    result = context[fnSymbol](...args);
+  } else {
+    result = context[fnSymbol]();
+  }
+
+  delete context[fnSymbol];
+  return result;
+};
+
+// 手寫 bind
+Function.prototype.myBind = function (context) {
+  if (typeof this !== "function") {
+    throw new TypeError("myBind must be called on a function");
+  }
+  const self = this;
+  const args = Array.prototype.slice.call(arguments, 1);
+
+  return function boundFunction() {
+    const finalArgs = args.concat(Array.prototype.slice.call(arguments));
+    // 如果用 new 呼叫，this 指向新實例
+    if (this instanceof boundFunction) {
+      return new self(...finalArgs);
+    }
+    return self.apply(context, finalArgs);
+  };
+};
+```
