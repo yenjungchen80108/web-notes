@@ -57,3 +57,29 @@ console.log(shortestBalancedSubstring("azABaabza")); // "ABaab"
 console.log(shortestBalancedSubstring("TacoCat")); // -1
 console.log(shortestBalancedSubstring("AcZCbaBz")); // "AcZCbaBz"
 ```
+
+```python
+def shortestBalancedSubstring(s: str) -> str:
+    n = len(s)
+    best = None
+
+    for i in range(n):
+        upper = 0
+        lower = 0
+        for j in range(i, n):
+            ch = s[j]
+            if ch.isalpha():
+                k = ord(ch.lower()) - ord('a')
+                if ch.isupper():
+                    upper |= (1 << k)
+                else:
+                    lower |= (1 << k)
+
+            if upper == lower and upper != 0:   # 重要：upper != 0 避免空字串
+                if best is None or (j - i + 1) < (best[1] - best[0]):
+                    best = (i, j + 1)
+                    if (j - i + 1) == 2:         # 最小可能長度
+                        return s[i:j+1]
+
+    return s[best[0]:best[1]] if best else -1
+```
